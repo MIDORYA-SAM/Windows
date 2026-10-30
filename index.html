@@ -3,159 +3,187 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="theme-color" content="#17191e">
-<title>Windows SSD Explorer 0.1</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#101827">
+<title>Windows SSD Explorer</title>
 
 <style>
 :root {
-  --bg:#f3f5f9;
+  color-scheme:dark;
+  --bg:#101827;
+  --panel:#182438;
+  --panel2:#202f45;
+  --text:#f4f7fc;
+  --muted:#9baac0;
+  --border:#304057;
+  --hover:#293c57;
+  --accent:#438cf5;
+}
+
+body.light {
+  color-scheme:light;
+  --bg:#f1f4f9;
   --panel:#ffffff;
-  --panel2:#e9edf4;
-  --text:#20232a;
-  --muted:#737b89;
-  --border:#dce1e9;
-  --accent:#3478df;
-  --hover:#e8f0fc;
-  --shadow:0 5px 25px #00000012;
+  --panel2:#e8edf5;
+  --text:#202938;
+  --muted:#758197;
+  --border:#dce3ed;
+  --hover:#e6efff;
+  --accent:#1769d2;
 }
 
-body.dark {
-  --bg:#17191e;
-  --panel:#22252c;
-  --panel2:#2c3039;
-  --text:#f0f2f6;
-  --muted:#a1a8b5;
-  --border:#383d48;
-  --accent:#5597ff;
-  --hover:#303d51;
-  --shadow:0 5px 25px #00000035;
-}
-
-* { box-sizing:border-box; }
+* {box-sizing:border-box}
 
 body {
   margin:0;
-  background:var(--bg);
-  color:var(--text);
-  font-family:Segoe UI,Arial,sans-serif;
   height:100dvh;
   overflow:hidden;
+  background:var(--bg);
+  color:var(--text);
+  font-family:"Segoe UI",Arial,sans-serif;
 }
 
-button,input {
-  font:inherit;
+button,input {font:inherit}
+button {cursor:pointer;color:inherit}
+
+#splash {
+  position:fixed;
+  inset:0;
+  z-index:100;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  background:#101827;
+  color:white;
+  transition:opacity .5s;
 }
 
-button {
-  cursor:pointer;
-  color:inherit;
+.win-logo {
+  width:76px;
+  height:76px;
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  grid-template-rows:1fr 1fr;
+  gap:5px;
+  transform:perspective(200px) rotateY(-8deg);
+  margin-bottom:28px;
 }
 
-.app {
+.win-logo span {background:#1687ed}
+
+#splash h2 {
+  font-size:20px;
+  font-weight:400;
+  margin:0 0 8px;
+}
+
+#splash p {font-size:12px;color:#9baac0}
+
+.loader {
+  width:145px;
+  height:3px;
+  background:#26344b;
+  margin-top:28px;
+  overflow:hidden;
+  border-radius:5px;
+}
+
+.loader:after {
+  content:"";
+  display:block;
+  height:100%;
+  width:40%;
+  background:#3997ff;
+  animation:loading 1.2s infinite ease-in-out;
+}
+
+@keyframes loading {
+  from {transform:translateX(-100%)}
+  to {transform:translateX(350%)}
+}
+
+#app {
   height:100dvh;
   display:flex;
   flex-direction:column;
+  opacity:0;
+  transition:opacity .5s;
 }
 
-/* HEADER */
+#app.ready {opacity:1}
 
-.header {
+.top {
   height:58px;
   flex-shrink:0;
+  background:var(--panel);
+  border-bottom:1px solid var(--border);
   display:flex;
   align-items:center;
   justify-content:space-between;
   padding:0 16px;
-  background:var(--panel);
-  border-bottom:1px solid var(--border);
 }
 
 .brand {
   display:flex;
   align-items:center;
-  gap:10px;
-  font-size:17px;
-  font-weight:700;
+  gap:11px;
+  font-size:16px;
+  font-weight:600;
 }
 
-.logo {
-  background:#3478df;
-  color:white;
-  padding:8px;
-  border-radius:9px;
-  font-size:19px;
+.small-logo {
+  width:27px;
+  height:27px;
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  grid-template-rows:1fr 1fr;
+  gap:2px;
 }
 
-.version {
-  font-size:10px;
-  color:var(--muted);
-  font-weight:400;
-}
+.small-logo span {background:#2589ef}
 
-.header-actions {
-  display:flex;
-  gap:8px;
-}
+.top-actions {display:flex;gap:8px}
 
-.icon-btn {
+.btn {
+  border:1px solid var(--border);
   background:var(--panel2);
-  border:1px solid var(--border);
-  border-radius:9px;
+  border-radius:7px;
   padding:9px 12px;
-}
-
-/* TOOLBAR */
-
-.toolbar {
-  display:flex;
-  align-items:center;
-  gap:8px;
-  padding:12px 15px;
-  background:var(--panel);
-  border-bottom:1px solid var(--border);
-}
-
-.action {
-  border:1px solid var(--border);
-  background:var(--panel);
-  padding:9px 13px;
-  border-radius:8px;
   font-size:13px;
-  white-space:nowrap;
 }
 
-.action:hover,.icon-btn:hover {
-  background:var(--hover);
-}
+.btn:hover {background:var(--hover)}
 
-.primary {
+.blue {
   background:var(--accent);
   color:white;
   border-color:var(--accent);
 }
 
-.primary:hover {
-  opacity:.85;
-  background:var(--accent);
+.blue:hover {opacity:.85}
+
+.toolbar {
+  background:var(--panel);
+  display:flex;
+  align-items:center;
+  gap:8px;
+  padding:10px 14px;
+  border-bottom:1px solid var(--border);
 }
 
 .search {
   flex:1;
-  min-width:60px;
-  padding:10px 13px;
-  border-radius:8px;
+  min-width:50px;
   border:1px solid var(--border);
+  border-radius:7px;
   background:var(--bg);
   color:var(--text);
+  padding:10px;
   outline:none;
 }
 
-.search:focus {
-  border-color:var(--accent);
-}
-
-/* MAIN */
+.search:focus {border-color:var(--accent)}
 
 .main {
   flex:1;
@@ -164,45 +192,39 @@ button {
 }
 
 .sidebar {
-  width:220px;
+  width:215px;
   flex-shrink:0;
-  padding:15px 10px;
   background:var(--panel);
   border-right:1px solid var(--border);
+  padding:13px 9px;
   overflow:auto;
 }
 
-.side-title {
-  font-size:11px;
-  font-weight:700;
+.section {
+  padding:13px 10px 8px;
   color:var(--muted);
-  padding:10px;
+  font-size:11px;
+  font-weight:bold;
   text-transform:uppercase;
   letter-spacing:1px;
 }
 
-.side-item {
-  display:flex;
-  gap:11px;
-  align-items:center;
+.nav {
   width:100%;
-  border:0;
-  background:transparent;
-  color:var(--text);
   padding:11px;
-  border-radius:8px;
+  border:0;
+  border-radius:6px;
+  background:transparent;
+  display:flex;
+  align-items:center;
+  gap:12px;
   text-align:left;
   font-size:13px;
-  margin-bottom:3px;
 }
 
-.side-item:hover,.side-item.active {
-  background:var(--hover);
-}
+.nav:hover,.nav.active {background:var(--hover)}
 
-.side-icon {
-  font-size:18px;
-}
+.nav-icon {font-size:18px}
 
 .content {
   flex:1;
@@ -212,103 +234,83 @@ button {
   overflow:hidden;
 }
 
-.pathbar {
+.address {
   display:flex;
   align-items:center;
   gap:7px;
-  padding:13px 17px;
-  border-bottom:1px solid var(--border);
+  min-height:48px;
   background:var(--panel);
-  overflow-x:auto;
+  border-bottom:1px solid var(--border);
+  padding:8px 15px;
+  overflow:auto;
   white-space:nowrap;
   font-size:13px;
 }
 
-.path-button {
+.crumb {
   border:0;
   background:transparent;
   color:var(--text);
-  padding:5px;
+  padding:6px;
   border-radius:5px;
 }
 
-.path-button:hover {
-  background:var(--hover);
-}
+.crumb:hover {background:var(--hover)}
 
-.path-separator {
-  color:var(--muted);
-}
-
-/* FILE AREA */
-
-.file-heading {
+.heading {
+  padding:17px 19px 10px;
   display:flex;
   justify-content:space-between;
   align-items:center;
-  padding:16px 20px;
 }
 
-.file-heading h2 {
+.heading h2 {
+  font-size:20px;
+  font-weight:500;
   margin:0;
-  font-size:19px;
 }
 
-.file-count {
-  color:var(--muted);
-  font-size:12px;
-}
+.muted {color:var(--muted);font-size:12px}
 
 .file-area {
   flex:1;
   overflow:auto;
-  padding:5px 18px 25px;
+  padding:12px 17px 25px;
 }
 
-.files {
+.file-grid {
   display:grid;
-  grid-template-columns:repeat(auto-fill,minmax(110px,1fr));
-  gap:10px;
+  grid-template-columns:repeat(auto-fill,minmax(105px,1fr));
+  gap:8px;
 }
 
 .file {
-  border:1px solid transparent;
-  border-radius:10px;
   min-width:0;
-  padding:13px 7px;
+  padding:13px 5px;
+  border:1px solid transparent;
+  border-radius:8px;
   display:flex;
   flex-direction:column;
   align-items:center;
-  gap:9px;
-  cursor:pointer;
   text-align:center;
+  gap:8px;
+  cursor:pointer;
 }
 
-.file:hover {
+.file:hover,.file.selected {
   background:var(--hover);
+  border-color:var(--border);
 }
 
-.file.selected {
-  background:var(--hover);
-  border-color:var(--accent);
-}
-
-.file-icon {
-  font-size:39px;
-  line-height:1.3;
-}
+.file-icon {font-size:39px}
 
 .file-name {
-  font-size:12px;
   width:100%;
+  font-size:12px;
   overflow-wrap:anywhere;
-  line-height:1.4;
 }
 
-.file-size {
-  font-size:10px;
-  color:var(--muted);
-}
+.file-detail {font-size:10px;color:var(--muted)}
 
 .empty {
   text-align:center;
@@ -316,63 +318,57 @@ button {
   color:var(--muted);
 }
 
-.empty-icon {
-  font-size:55px;
-  margin-bottom:15px;
-}
+.empty .big {font-size:60px;margin-bottom:15px}
 
-/* STATUS */
+.empty h3 {color:var(--text);font-weight:500}
 
-.statusbar {
-  min-height:33px;
+.empty p {font-size:13px;line-height:1.7}
+
+.status {
+  min-height:32px;
   flex-shrink:0;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  padding:5px 15px;
-  font-size:11px;
-  color:var(--muted);
   background:var(--panel);
   border-top:1px solid var(--border);
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:5px 13px;
+  font-size:11px;
+  color:var(--muted);
 }
-
-/* PREVIEW */
 
 .overlay {
   position:fixed;
+  z-index:20;
   inset:0;
-  background:#000a;
-  z-index:10;
   display:none;
   align-items:center;
   justify-content:center;
-  padding:15px;
+  background:#000b;
+  padding:12px;
 }
 
-.overlay.show {
-  display:flex;
-}
+.overlay.show {display:flex}
 
 .modal {
-  width:min(700px,100%);
+  width:min(750px,100%);
   max-height:90dvh;
   overflow:auto;
   background:var(--panel);
   border:1px solid var(--border);
-  border-radius:14px;
-  box-shadow:var(--shadow);
+  border-radius:12px;
 }
 
-.modal-header {
+.modal-head {
   display:flex;
-  justify-content:space-between;
   align-items:center;
-  padding:15px;
+  justify-content:space-between;
+  padding:14px;
   border-bottom:1px solid var(--border);
 }
 
 .modal-body {
-  padding:18px;
+  padding:15px;
   text-align:center;
 }
 
@@ -389,234 +385,173 @@ button {
 }
 
 .modal-body pre {
+  text-align:left;
   white-space:pre-wrap;
   overflow-wrap:anywhere;
-  text-align:left;
-  max-height:55dvh;
   overflow:auto;
+  max-height:60dvh;
+  padding:12px;
   background:var(--bg);
-  padding:14px;
-  border-radius:8px;
-  font-size:12px;
+  border-radius:7px;
 }
 
-.modal-footer {
+.modal-foot {
+  padding:12px;
   display:flex;
   justify-content:flex-end;
   gap:8px;
-  padding:12px;
   border-top:1px solid var(--border);
 }
 
-.hidden { display:none!important; }
-
-/* MOBILE */
+.hidden {display:none!important}
 
 @media(max-width:650px) {
-  .sidebar {
-    width:65px;
-    padding:12px 5px;
-  }
-
-  .side-title,.side-label {
-    display:none;
-  }
-
-  .side-item {
-    justify-content:center;
-    padding:13px 5px;
-  }
-
-  .side-icon {
-    font-size:21px;
-  }
-
-  .toolbar {
-    flex-wrap:wrap;
-    padding:9px;
-  }
-
-  .toolbar .action {
-    padding:9px;
-    font-size:11px;
-  }
-
-  .search {
-    order:5;
-    flex-basis:100%;
-  }
-
-  .file-heading {
-    padding:13px;
-  }
-
-  .file-area {
-    padding:5px 8px 20px;
-  }
-
-  .files {
-    grid-template-columns:repeat(auto-fill,minmax(85px,1fr));
-    gap:4px;
-  }
-
-  .file {
-    padding:10px 4px;
-  }
-
-  .brand {
-    font-size:14px;
-  }
+  .sidebar {width:60px;padding:10px 4px}
+  .section,.nav-label {display:none}
+  .nav {justify-content:center;padding:13px 3px}
+  .nav-icon {font-size:21px}
+  .brand {font-size:13px}
+  .toolbar {flex-wrap:wrap;padding:8px}
+  .toolbar .btn {padding:9px;font-size:11px}
+  .search {order:5;flex-basis:100%}
+  .file-grid {grid-template-columns:repeat(auto-fill,minmax(83px,1fr))}
+  .heading {padding:14px}
 }
 </style>
 </head>
 
-<body class="dark">
+<body>
 
-<div class="app">
+<div id="splash">
+  <div class="win-logo">
+    <span></span><span></span>
+    <span></span><span></span>
+  </div>
+  <h2>Windows SSD Explorer</h2>
+  <p>Explorador de arquivos</p>
+  <div class="loader"></div>
+</div>
 
-  <header class="header">
+<div id="app">
+
+  <header class="top">
     <div class="brand">
-      <div class="logo">▦</div>
-      <div>
-        Windows SSD Explorer
-        <div class="version">VERSÃO 0.1</div>
+      <div class="small-logo">
+        <span></span><span></span>
+        <span></span><span></span>
       </div>
+      Windows SSD Explorer
     </div>
 
-    <div class="header-actions">
-      <button class="icon-btn" id="themeBtn" title="Alternar tema">
-        ☀️
-      </button>
-      <button class="icon-btn" id="aboutBtn" title="Sobre">
-        ℹ️
-      </button>
+    <div class="top-actions">
+      <button class="btn" id="theme">☀️</button>
+      <button class="btn" id="info">ⓘ</button>
     </div>
   </header>
 
   <div class="toolbar">
-    <button class="action primary" id="connectBtn">
-      🔌 Conectar SSD
-    </button>
-
-    <button class="action" id="homeBtn">⌂ Início</button>
-
-    <button class="action" id="backBtn">← Voltar</button>
-
-    <input
-      class="search"
-      id="search"
-      type="search"
-      placeholder="Pesquisar arquivos e pastas..."
-    >
-
-    <button class="action" id="viewBtn">▤ Lista</button>
+    <button class="btn blue" id="openSSD">💽 Abrir SSD</button>
+    <button class="btn" id="openFolder">📁 Pasta</button>
+    <button class="btn" id="back">←</button>
+    <button class="btn" id="home">⌂</button>
+    <input class="search" id="search" placeholder="Pesquisar neste SSD...">
   </div>
 
-  <main class="main">
+  <div class="main">
 
     <aside class="sidebar">
+      <div class="section">Início</div>
 
-      <div class="side-title">Navegação</div>
-
-      <button class="side-item active" id="navHome">
-        <span class="side-icon">⌂</span>
-        <span class="side-label">Início</span>
+      <button class="nav active" id="nHome">
+        <span class="nav-icon">⌂</span>
+        <span class="nav-label">Início</span>
       </button>
 
-      <button class="side-item" id="navDesktop">
-        <span class="side-icon">🖥️</span>
-        <span class="side-label">Área de trabalho</span>
+      <button class="nav" id="nDesktop">
+        <span class="nav-icon">🖥️</span>
+        <span class="nav-label">Área de trabalho</span>
       </button>
 
-      <button class="side-item" id="navDocuments">
-        <span class="side-icon">📄</span>
-        <span class="side-label">Documentos</span>
+      <button class="nav" id="nDocs">
+        <span class="nav-icon">📄</span>
+        <span class="nav-label">Documentos</span>
       </button>
 
-      <button class="side-item" id="navDownloads">
-        <span class="side-icon">⬇️</span>
-        <span class="side-label">Downloads</span>
+      <button class="nav" id="nDownloads">
+        <span class="nav-icon">⬇️</span>
+        <span class="nav-label">Downloads</span>
       </button>
 
-      <button class="side-item" id="navPictures">
-        <span class="side-icon">🖼️</span>
-        <span class="side-label">Imagens</span>
+      <button class="nav" id="nPictures">
+        <span class="nav-icon">🖼️</span>
+        <span class="nav-label">Imagens</span>
       </button>
 
-      <div class="side-title">Dispositivos</div>
+      <div class="section">Dispositivos</div>
 
-      <button class="side-item" id="navSSD">
-        <span class="side-icon">💽</span>
-        <span class="side-label">SSD / Windows</span>
+      <button class="nav" id="nSSD">
+        <span class="nav-icon">💽</span>
+        <span class="nav-label">SSD externo</span>
       </button>
-
     </aside>
 
     <section class="content">
 
-      <div class="pathbar" id="pathbar">
-        <span>⌂</span>
-        <span>Início</span>
+      <div class="address" id="address">
+        <span>⌂ Início</span>
       </div>
 
-      <div class="file-heading">
-        <h2 id="folderTitle">Início</h2>
-        <span class="file-count" id="fileCount">0 itens</span>
+      <div class="heading">
+        <h2 id="title">Início</h2>
+        <span class="muted" id="count">0 itens</span>
       </div>
 
       <div class="file-area">
-        <div class="files" id="files"></div>
-        <div class="empty hidden" id="empty">
-          <div class="empty-icon">💽</div>
-          <strong id="emptyTitle">Nenhum arquivo carregado</strong>
-          <p id="emptyDescription">
-            Conecte seu SSD ou selecione uma pasta.
+        <div class="file-grid" id="grid"></div>
+
+        <div class="empty" id="empty">
+          <div class="big">💽</div>
+          <h3>Seu armazenamento</h3>
+          <p>
+            Conecte o SSD ao iPhone pelo adaptador USB.<br>
+            Depois toque em Abrir SSD e escolha os arquivos
+            no aplicativo Arquivos.
           </p>
-          <button class="action primary" onclick="connectSSD()">
-            Conectar armazenamento
+          <button class="btn blue" id="emptyConnect">
+            Selecionar arquivos do SSD
           </button>
         </div>
       </div>
 
     </section>
+  </div>
 
-  </main>
-
-  <footer class="statusbar">
-    <span id="status">Aguardando conexão</span>
-    <span>Windows SSD Explorer 0.1</span>
+  <footer class="status">
+    <span id="status">Aguardando armazenamento</span>
+    <span>Explorer 0.2</span>
   </footer>
-
 </div>
 
-<!-- SELETORES -->
+<!-- SELETORES NATIVOS -->
 
-<input type="file" id="folderInput"
-  webkitdirectory directory multiple class="hidden">
-
-<input type="file" id="fileInput" multiple class="hidden">
+<input id="filePicker" type="file" multiple class="hidden">
+<input id="folderPicker" type="file" multiple webkitdirectory class="hidden">
 
 <!-- VISUALIZADOR -->
 
 <div class="overlay" id="overlay">
   <div class="modal">
-
-    <div class="modal-header">
+    <div class="modal-head">
       <strong id="previewTitle">Arquivo</strong>
-      <button class="icon-btn" id="closePreview">✕</button>
+      <button class="btn" id="close">✕</button>
     </div>
 
-    <div class="modal-body" id="previewBody"></div>
+    <div class="modal-body" id="preview"></div>
 
-    <div class="modal-footer">
-      <button class="action" id="downloadBtn">
-        ⬇ Copiar para o celular
-      </button>
-      <button class="action" id="closePreview2">
-        Fechar
-      </button>
+    <div class="modal-foot">
+      <button class="btn blue" id="save">Salvar no celular</button>
+      <button class="btn" id="close2">Fechar</button>
     </div>
-
   </div>
 </div>
 
@@ -626,26 +561,21 @@ const $ = id => document.getElementById(id);
 let root = null;
 let current = null;
 let history = [];
-let selected = null;
-let listMode = false;
-let searchText = "";
-let currentPreviewURL = null;
+let currentURL = null;
+let search = "";
+let filesLoaded = 0;
 
-/* ÁRVORE DE ARQUIVOS */
-
-function directory(name, handle=null, parent=null) {
+function makeFolder(name,parent=null) {
   return {
     name,
-    type:"directory",
-    handle,
+    type:"folder",
     parent,
     children:[],
-    loaded:!handle,
     path:parent ? [...parent.path,name] : [name]
   };
 }
 
-function fileNode(file,parent) {
+function makeFile(file,parent) {
   return {
     name:file.name,
     type:"file",
@@ -655,160 +585,147 @@ function fileNode(file,parent) {
   };
 }
 
-function escapeHTML(value) {
+function safe(value) {
   return String(value).replace(/[&<>"']/g,c=>({
-    "&":"&amp;",
-    "<":"&lt;",
-    ">":"&gt;",
-    '"':"&quot;",
-    "'":"&#39;"
+    "&":"&amp;","<":"&lt;",">":"&gt;",
+    '"':"&quot;","'":"&#39;"
   })[c]);
 }
 
-/* CARREGAR PASTAS USB */
+/* INICIALIZAÇÃO */
 
-async function loadDirectory(node) {
-  if(node.loaded) return;
+window.addEventListener("load",()=>{
+  setTimeout(()=>{
+    $("splash").style.opacity="0";
+    $("app").classList.add("ready");
 
-  try {
-    const children=[];
+    setTimeout(()=>{
+      $("splash").style.display="none";
+    },500);
+  },1300);
+});
 
-    for await (const [name,handle] of node.handle.entries()) {
-      if(handle.kind==="directory") {
-        children.push(directory(name,handle,node));
-      } else {
-        const file=await handle.getFile();
-        children.push(fileNode(file,node));
-      }
-    }
+/* TEMA */
 
-    node.children=children;
-    node.loaded=true;
+$("theme").onclick=()=>{
+  document.body.classList.toggle("light");
 
-    node.children.sort((a,b)=>{
-      if(a.type!==b.type) return a.type==="directory"?-1:1;
-      return a.name.localeCompare(b.name);
-    });
+  $("theme").textContent=
+    document.body.classList.contains("light")?"🌙":"☀️";
+};
 
-  } catch(error) {
-    console.error(error);
-    alert("Não foi possível ler esta pasta. Verifique as permissões.");
-  }
+/* CONEXÃO */
+
+function connectSSD() {
+  // iPhone e iPad: abrir seletor nativo de arquivos.
+  // O utilizador navega até o SSD no app Arquivos.
+
+  $("filePicker").click();
 }
 
-/* CONECTAR SSD */
+$("openSSD").onclick=connectSSD;
+$("emptyConnect").onclick=connectSSD;
 
-async function connectSSD() {
+/* SELECIONAR PASTA */
 
-  // Tentativa com API de pastas do navegador.
-  if(window.showDirectoryPicker) {
-    try {
-      const handle=await window.showDirectoryPicker({
-        mode:"read"
-      });
+$("openFolder").onclick=()=>{
+  $("folderPicker").click();
+};
 
-      root=directory(handle.name,handle);
-      current=root;
+/* CONSTRUIR ÁRVORE */
 
-      $("status").textContent="Armazenamento conectado: "+handle.name;
-
-      await loadDirectory(root);
-      history=[];
-      render();
-      return;
-
-    } catch(error) {
-      if(error.name==="AbortError") return;
-      console.log("API de diretórios indisponível:",error);
-    }
-  }
-
-  // Alternativa: selecionar pasta pelo sistema.
-  if("webkitdirectory" in $("folderInput")) {
-    $("folderInput").click();
-  } else {
-    $("fileInput").click();
-  }
-}
-
-/* IMPORTAR PASTA */
-
-$("folderInput").addEventListener("change",e=>{
-  const files=Array.from(e.target.files);
+function importFiles(fileList) {
+  const files=Array.from(fileList);
 
   if(!files.length) return;
 
-  root=directory(
-    files[0].webkitRelativePath.split("/")[0] || "SSD"
-  );
+  const firstPath=files[0].webkitRelativePath || "";
+
+  const folderName=firstPath
+    ? firstPath.split("/")[0]
+    : "SSD selecionado";
+
+  root=makeFolder(folderName);
 
   for(const file of files) {
-    const parts=file.webkitRelativePath
-      ? file.webkitRelativePath.split("/")
-      : [file.name];
+    const relative=file.webkitRelativePath;
 
-    let node=root;
+    if(relative) {
+      const parts=relative.split("/");
+      let node=root;
 
-    for(let i=1;i<parts.length-1;i++) {
-      let child=node.children.find(
-        x=>x.type==="directory" && x.name===parts[i]
-      );
+      for(let i=1;i<parts.length-1;i++) {
+        let child=node.children.find(
+          x=>x.type==="folder" && x.name===parts[i]
+        );
 
-      if(!child) {
-        child=directory(parts[i],null,node);
-        node.children.push(child);
+        if(!child) {
+          child=makeFolder(parts[i],node);
+          node.children.push(child);
+        }
+
+        node=child;
       }
 
-      node=child;
-    }
+      node.children.push(makeFile(file,node));
 
-    node.children.push(fileNode(file,node));
+    } else {
+      root.children.push(makeFile(file,root));
+    }
   }
 
-  current=root;
-  history=[];
-  $("status").textContent=files.length+" arquivos carregados";
-  e.target.value="";
-  render();
-});
-
-/* IMPORTAR ARQUIVOS */
-
-$("fileInput").addEventListener("change",e=>{
-  const files=Array.from(e.target.files);
-
-  if(!files.length) return;
-
-  root=directory("Arquivos selecionados");
-
-  root.children=files.map(file=>fileNode(file,root));
+  sortTree(root);
 
   current=root;
   history=[];
-  $("status").textContent=files.length+" arquivos selecionados";
+  search="";
+  $("search").value="";
 
-  e.target.value="";
+  filesLoaded=files.length;
+
+  $("status").textContent=
+    filesLoaded+" arquivos carregados";
+
+  $("nSSD").classList.add("active");
+
   render();
-});
+}
+
+function sortTree(node) {
+  node.children.sort((a,b)=>{
+    if(a.type!==b.type) return a.type==="folder"?-1:1;
+    return a.name.localeCompare(b.name);
+  });
+
+  node.children.forEach(child=>{
+    if(child.type==="folder") sortTree(child);
+  });
+}
+
+$("filePicker").onchange=e=>{
+  importFiles(e.target.files);
+  e.target.value="";
+};
+
+$("folderPicker").onchange=e=>{
+  importFiles(e.target.files);
+  e.target.value="";
+};
 
 /* NAVEGAÇÃO */
 
-async function navigate(node) {
-  if(!node || node.type!=="directory") return;
+function go(node) {
+  if(!node || node.type!=="folder") return;
 
   if(current && current!==node) history.push(current);
 
-  await loadDirectory(node);
-
   current=node;
-  selected=null;
   render();
 }
 
-function goBack() {
+function back() {
   if(history.length) {
     current=history.pop();
-    selected=null;
     render();
   } else if(current && current.parent) {
     current=current.parent;
@@ -816,245 +733,223 @@ function goBack() {
   }
 }
 
+$("back").onclick=back;
+
+$("home").onclick=()=>{
+  if(root) {
+    history=[];
+    go(root);
+  } else {
+    showHome();
+  }
+};
+
+$("nHome").onclick=showHome;
+
+$("nSSD").onclick=()=>{
+  if(root) {
+    history=[];
+    go(root);
+  } else connectSSD();
+};
+
 /* PESQUISA */
 
-function collectFiles(node,results=[]) {
-  if(!node || !node.children) return results;
-
+function flatten(node,result=[]) {
   for(const child of node.children) {
-    results.push(child);
-    if(child.type==="directory") collectFiles(child,results);
+    result.push(child);
+
+    if(child.type==="folder") flatten(child,result);
   }
 
-  return results;
+  return result;
 }
+
+$("search").addEventListener("input",e=>{
+  search=e.target.value.toLowerCase().trim();
+  render();
+});
 
 /* ÍCONES */
 
-function getIcon(node) {
-  if(node.type==="directory") return "📁";
+function icon(item) {
+  if(item.type==="folder") return "📁";
 
-  const ext=node.name.split(".").pop().toLowerCase();
+  const ext=item.name.split(".").pop().toLowerCase();
 
-  const icons={
+  const map={
+    jpg:"🖼️",jpeg:"🖼️",png:"🖼️",webp:"🖼️",
+    gif:"🖼️",bmp:"🖼️",
     pdf:"📕",
-    jpg:"🖼️",jpeg:"🖼️",png:"🖼️",gif:"🖼️",
-    webp:"🖼️",bmp:"🖼️",
+    doc:"📝",docx:"📝",
+    xls:"📊",xlsx:"📊",
     mp4:"🎬",mkv:"🎬",mov:"🎬",
     mp3:"🎵",wav:"🎵",
-    txt:"📄",doc:"📝",docx:"📝",
-    xls:"📊",xlsx:"📊",
     zip:"📦",rar:"📦",7z:"📦",
     exe:"⚙️",dll:"⚙️",sys:"⚙️",
+    txt:"📄",log:"📄",ini:"📄",
     html:"🌐",js:"📜",css:"🎨",
     iso:"💿"
   };
 
-  return icons[ext] || "📄";
+  return map[ext] || "📄";
 }
 
 /* TAMANHO */
 
-function formatSize(size) {
-  if(size===undefined) return "";
-
-  if(size<1024) return size+" B";
-  if(size<1048576) return (size/1024).toFixed(1)+" KB";
-  if(size<1073741824) return (size/1048576).toFixed(1)+" MB";
-
-  return (size/1073741824).toFixed(2)+" GB";
+function size(value) {
+  if(value<1024) return value+" B";
+  if(value<1048576) return (value/1024).toFixed(1)+" KB";
+  if(value<1073741824) return (value/1048576).toFixed(1)+" MB";
+  return (value/1073741824).toFixed(2)+" GB";
 }
 
-/* INTERFACE */
+/* RENDERIZAR */
 
 function render() {
   if(!current) return;
 
-  $("folderTitle").textContent=current.name;
+  $("title").textContent=current.name;
 
-  const query=searchText.trim().toLowerCase();
+  let items=search
+    ?flatten(root).filter(x=>x.name.toLowerCase().includes(search))
+    :current.children;
 
-  let items=current.children || [];
-
-  if(query) {
-    items=collectFiles(root,[]).filter(
-      item=>item.name.toLowerCase().includes(query)
-    );
-  }
-
-  $("fileCount").textContent=items.length+
+  $("count").textContent=items.length+
     (items.length===1?" item":" itens");
 
   $("empty").classList.toggle("hidden",items.length>0);
-  $("files").classList.toggle("hidden",items.length===0);
+  $("grid").classList.toggle("hidden",items.length===0);
 
-  $("emptyTitle").textContent=query
-    ?"Nenhum resultado encontrado"
-    :"Esta pasta está vazia";
+  $("grid").innerHTML="";
 
-  $("emptyDescription").textContent=query
-    ?"Tente pesquisar outro nome."
-    :"Selecione uma pasta ou conecte um armazenamento.";
+  items.forEach(item=>{
+    const div=document.createElement("div");
+    div.className="file";
 
-  $("files").style.gridTemplateColumns=listMode
-    ?"1fr"
-    :"";
+    const ic=document.createElement("div");
+    ic.className="file-icon";
+    ic.textContent=icon(item);
 
-  $("files").innerHTML=items.map((item,index)=>`
-    <div class="file ${selected===item?"selected":""}"
-      data-index="${index}">
-      <div class="file-icon">${getIcon(item)}</div>
-      <div class="file-name">${escapeHTML(item.name)}</div>
-      <div class="file-size">
-        ${item.type==="directory"?"Pasta":formatSize(item.file?.size)}
-      </div>
-    </div>
-  `).join("");
+    const name=document.createElement("div");
+    name.className="file-name";
+    name.textContent=item.name;
 
-  $("pathbar").innerHTML="";
+    const detail=document.createElement("div");
+    detail.className="file-detail";
+    detail.textContent=item.type==="folder"
+      ?"Pasta"
+      :size(item.file.size);
 
-  let ancestors=[];
-  let node=current;
+    div.append(ic,name,detail);
 
-  while(node) {
-    ancestors.unshift(node);
-    node=node.parent;
-  }
+    div.onclick=()=>{
+      if(item.type==="folder") {
+        if(search) {
+          search="";
+          $("search").value="";
+        }
+        go(item);
+      } else {
+        openFile(item);
+      }
+    };
 
-  ancestors.forEach((item,index)=>{
-    if(index) {
-      const sep=document.createElement("span");
-      sep.className="path-separator";
-      sep.textContent="›";
-      $("pathbar").appendChild(sep);
-    }
-
-    const button=document.createElement("button");
-    button.className="path-button";
-    button.textContent=item.name;
-
-    button.addEventListener("click",()=>{
-      history=[];
-      navigate(item);
-    });
-
-    $("pathbar").appendChild(button);
+    $("grid").appendChild(div);
   });
 
-  document.querySelectorAll(".side-item").forEach(
-    item=>item.classList.remove("active")
-  );
+  /* CAMINHO */
 
-  $("navSSD").classList.add("active");
-}
+  $("address").innerHTML="";
 
-/* CLIQUE EM ARQUIVOS */
+  let path=[];
+  let n=current;
 
-$("files").addEventListener("click",async e=>{
-  const element=e.target.closest(".file");
-  if(!element) return;
+  while(n) {
+    path.unshift(n);
+    n=n.parent;
+  }
 
-  const items=searchText
-    ?collectFiles(root,[]).filter(
-      item=>item.name.toLowerCase().includes(searchText.toLowerCase())
-    )
-    :current.children;
-
-  const item=items[Number(element.dataset.index)];
-
-  if(!item) return;
-
-  selected=item;
-
-  if(item.type==="directory") {
-    if(searchText) {
-      searchText="";
-      $("search").value="";
+  path.forEach((node,index)=>{
+    if(index) {
+      const sep=document.createElement("span");
+      sep.textContent="›";
+      $("address").appendChild(sep);
     }
 
-    await navigate(item);
-  } else {
-    render();
-    openFile(item);
-  }
-});
+    const btn=document.createElement("button");
+    btn.className="crumb";
+    btn.textContent=node.name;
 
-/* VISUALIZAR ARQUIVOS */
+    btn.onclick=()=>{
+      history=[];
+      go(node);
+    };
 
-async function getFile(item) {
-  if(item.file) return item.file;
-
-  if(item.handle) return await item.handle.getFile();
-
-  return null;
+    $("address").appendChild(btn);
+  });
 }
 
-async function openFile(item) {
-  const file=await getFile(item);
+/* ABRIR ARQUIVO */
 
-  if(!file) return;
+async function openFile(item) {
+  const file=item.file;
+  const ext=item.name.split(".").pop().toLowerCase();
+
+  if(currentURL) URL.revokeObjectURL(currentURL);
+
+  currentURL=URL.createObjectURL(file);
 
   $("previewTitle").textContent=item.name;
-  $("previewBody").innerHTML="";
+  $("preview").innerHTML="";
 
-  if(currentPreviewURL) {
-    URL.revokeObjectURL(currentPreviewURL);
-    currentPreviewURL=null;
-  }
-
-  const url=URL.createObjectURL(file);
-  currentPreviewURL=url;
-
-  const ext=item.name.split(".").pop().toLowerCase();
+  const url=currentURL;
 
   if(file.type.startsWith("image/")) {
     const img=document.createElement("img");
     img.src=url;
-    $("previewBody").appendChild(img);
+    $("preview").appendChild(img);
 
   } else if(file.type==="application/pdf" || ext==="pdf") {
     const frame=document.createElement("iframe");
     frame.src=url;
-    $("previewBody").appendChild(frame);
-
-  } else if(
-    file.type.startsWith("text/") ||
-    ["txt","json","js","css","html","xml","log","md","csv","ini","bat","ps1","reg"].includes(ext)
-  ) {
-    const pre=document.createElement("pre");
-
-    const text=await file.slice(0,1024*1024).text();
-    pre.textContent=text;
-
-    $("previewBody").appendChild(pre);
+    $("preview").appendChild(frame);
 
   } else if(file.type.startsWith("video/")) {
     const video=document.createElement("video");
     video.src=url;
     video.controls=true;
     video.style.maxWidth="100%";
-    video.style.maxHeight="55dvh";
-    $("previewBody").appendChild(video);
+    video.style.maxHeight="60dvh";
+    $("preview").appendChild(video);
 
   } else if(file.type.startsWith("audio/")) {
     const audio=document.createElement("audio");
     audio.src=url;
     audio.controls=true;
-    $("previewBody").appendChild(audio);
+    $("preview").appendChild(audio);
+
+  } else if(
+    file.type.startsWith("text/") ||
+    ["txt","log","json","html","css","js","xml","md","csv","ini","bat","ps1","reg"].includes(ext)
+  ) {
+    const pre=document.createElement("pre");
+    pre.textContent=await file.slice(0,1024*1024).text();
+    $("preview").appendChild(pre);
 
   } else {
-    $("previewBody").innerHTML=`
-      <div style="font-size:50px">📄</div>
+    $("preview").innerHTML=`
+      <div style="font-size:55px">📄</div>
       <h3>Arquivo selecionado</h3>
-      <p>${escapeHTML(item.name)}</p>
-      <p>Tamanho: ${formatSize(file.size)}</p>
-      <p>Este formato não possui visualizador integrado.</p>
+      <p>${safe(item.name)}</p>
+      <p class="muted">${size(file.size)}</p>
+      <p class="muted">Não há visualizador disponível para este formato.</p>
     `;
   }
 
   $("overlay").classList.add("show");
 
-  $("downloadBtn").onclick=()=>{
+  $("save").onclick=()=>{
     const a=document.createElement("a");
     a.href=url;
     a.download=file.name;
@@ -1062,108 +957,75 @@ async function openFile(item) {
   };
 }
 
-/* FECHAR VISUALIZADOR */
+/* FECHAR */
 
 function closePreview() {
   $("overlay").classList.remove("show");
+}
 
-  if(currentPreviewURL) {
-    URL.revokeObjectURL(currentPreviewURL);
-    currentPreviewURL=null;
+$("close").onclick=closePreview;
+$("close2").onclick=closePreview;
+
+$("overlay").onclick=e=>{
+  if(e.target===$("overlay")) closePreview();
+};
+
+/* PASTAS DO WINDOWS */
+
+function findFolder(name) {
+  if(!root) {
+    alert("Primeiro selecione arquivos ou uma pasta do SSD.");
+    return;
+  }
+
+  const result=flatten(root).find(
+    x=>x.type==="folder" &&
+    x.name.toLowerCase()===name.toLowerCase()
+  );
+
+  if(result) {
+    history=[];
+    go(result);
+  } else {
+    alert("Pasta não encontrada nos arquivos importados.");
   }
 }
 
-$("closePreview").onclick=closePreview;
-$("closePreview2").onclick=closePreview;
+$("nDesktop").onclick=()=>findFolder("Desktop");
+$("nDocs").onclick=()=>findFolder("Documents");
+$("nDownloads").onclick=()=>findFolder("Downloads");
+$("nPictures").onclick=()=>findFolder("Pictures");
 
-$("overlay").addEventListener("click",e=>{
-  if(e.target===$("overlay")) closePreview();
-});
+/* INÍCIO */
 
-/* BOTÕES */
+function showHome() {
+  if(root) {
+    history=[];
+    go(root);
+  } else {
+    $("title").textContent="Início";
+    $("count").textContent="Nenhum dispositivo";
+    $("grid").innerHTML="";
+    $("grid").classList.add("hidden");
+    $("empty").classList.remove("hidden");
+    $("address").textContent="⌂ Início";
+    $("nHome").classList.add("active");
+  }
+}
 
-$("connectBtn").onclick=connectSSD;
-$("backBtn").onclick=goBack;
+/* INFORMAÇÕES */
 
-$("homeBtn").onclick=()=>{
-  if(root) navigate(root);
-  else showEmptyHome();
-};
-
-$("themeBtn").onclick=()=>{
-  document.body.classList.toggle("dark");
-
-  $("themeBtn").textContent=
-    document.body.classList.contains("dark")?"☀️":"🌙";
-};
-
-$("viewBtn").onclick=()=>{
-  listMode=!listMode;
-  $("viewBtn").textContent=listMode?"▦ Ícones":"▤ Lista";
-  render();
-};
-
-$("search").addEventListener("input",e=>{
-  searchText=e.target.value;
-  render();
-});
-
-$("aboutBtn").onclick=()=>{
+$("info").onclick=()=>{
   alert(
-    "Windows SSD Explorer 0.1\n\n"+
-    "Explorador de arquivos experimental.\n"+
-    "Desenvolvido em HTML, CSS e JavaScript.\n\n"+
-    "Acesso ao armazenamento limitado pelas permissões do navegador."
+    "Windows SSD Explorer 0.2\n\n"+
+    "Explorador experimental de arquivos.\n"+
+    "Acesso por seletor de arquivos do sistema.\n"+
+    "Não monta diretamente partições NTFS.\n"+
+    "Não altera arquivos do Windows."
   );
 };
 
-/* NAVEGAÇÃO LATERAL */
-
-function showEmptyHome() {
-  current=null;
-  $("folderTitle").textContent="Início";
-  $("fileCount").textContent="0 itens";
-  $("files").innerHTML="";
-  $("files").classList.add("hidden");
-  $("empty").classList.remove("hidden");
-  $("emptyTitle").textContent="Bem-vindo ao SSD Explorer";
-  $("emptyDescription").textContent=
-    "Conecte seu SSD para visualizar seus arquivos.";
-  $("pathbar").innerHTML="<span>⌂ Início</span>";
-  $("navHome").classList.add("active");
-}
-
-$("navHome").onclick=()=>{
-  if(root) navigate(root);
-  else showEmptyHome();
-};
-
-$("navSSD").onclick=()=>{
-  if(root) navigate(root);
-  else connectSSD();
-};
-
-function findFolder(name) {
-  if(!root) return;
-
-  const target=collectFiles(root,[]).find(
-    item=>item.type==="directory" &&
-    item.name.toLowerCase()===name.toLowerCase()
-  );
-
-  if(target) navigate(target);
-  else alert("Pasta não encontrada. Carregue o SSD primeiro.");
-}
-
-$("navDesktop").onclick=()=>findFolder("Desktop");
-$("navDocuments").onclick=()=>findFolder("Documents");
-$("navDownloads").onclick=()=>findFolder("Downloads");
-$("navPictures").onclick=()=>findFolder("Pictures");
-
-/* INICIALIZAÇÃO */
-
-showEmptyHome();
-
+showHome();
 </script>
 
 </body>
